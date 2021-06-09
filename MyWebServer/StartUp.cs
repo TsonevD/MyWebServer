@@ -6,27 +6,18 @@ using System.Threading.Tasks;
 using MyWebServer.Controllers;
 using MyWebServer.Server;
 using MyWebServer.Server.Responses;
+using MyWebServer.Server.Controllers;
 
 namespace MyWebServer
 {
-   public class StartUp
+    public class StartUp
     {
         public static async Task Main(string[] args)
         {
             var server = new HttpServer(routingTable => routingTable
-                .MapGet("/" , new TextResponse("Hello from Dimitar!"))
-                .MapGet("/Cats" ,request =>
-                {
-                    const string nameKey = "Name";
-                    var query = request.Query;
-
-                    var catName = query.ContainsKey(nameKey) ? query[nameKey] : "the cats";
-
-                    var result = $"<h1>Hello from {catName}!!!</h1>";
-
-                    return new HtmlResponse(result);
-                })
-                .MapGet("/Dogs" , new TextResponse("Marcho Rullzzz!!!")));
+                .MapGet<HomeController>("/", c => c.Index())
+                .MapGet<AnimalsController>("/Cats", c => c.Cats())
+                .MapGet<AnimalsController>("/Dogs", c => c.Dogs()));
 
             await server.Start();
         }

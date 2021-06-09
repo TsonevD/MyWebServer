@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MyWebServer.Server.Controllers;
 using MyWebServer.Server.Http;
+using MyWebServer.Server.Responses;
 
 namespace MyWebServer.Controllers
 {
-    public class HomeController
+    public class HomeController : Controller
     {
+        public HomeController(HttpRequest request)
+            : base(request)
+        {
+        }
         public HttpResponse Index()
         {
-            return null;
+            return Text("Hello from Dimitar!");
         }
     }
 }
