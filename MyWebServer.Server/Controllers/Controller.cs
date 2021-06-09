@@ -1,4 +1,5 @@
-﻿using MyWebServer.Server.Http;
+﻿using System.Runtime.InteropServices;
+using MyWebServer.Server.Http;
 using MyWebServer.Server.Responses;
 
 namespace MyWebServer.Server.Controllers
@@ -20,6 +21,12 @@ namespace MyWebServer.Server.Controllers
         protected HttpResponse Html(string html)
         {
             return new HtmlResponse(html);
+        }
+
+
+        protected HttpResponse Redirect(string location)
+        {
+            return new RedirectResponse(location);
         }
     }
 }

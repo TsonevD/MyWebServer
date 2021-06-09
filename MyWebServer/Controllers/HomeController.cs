@@ -14,5 +14,16 @@ namespace MyWebServer.Controllers
         {
             return Text("Hello from Dimitar!");
         }
+
+        public HttpResponse toSoftUni()
+        {
+            return Redirect("https://softuni.bg");
+        }
+
+        public HttpResponse LocalRedirect()
+        {
+            return Redirect("/Dogs");
+        }
+
     }
 }

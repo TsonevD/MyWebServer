@@ -18,15 +18,13 @@ namespace MyWebServer.Server.Routing
 
         IRoutingTable MapGet(string path, Func<HttpRequest , HttpResponse> responseFunction);
 
-        IRoutingTable MapGet<TController>(string path, Func<TController, HttpResponse> controllerFunction)
-            where TController : Controller;
+
 
         IRoutingTable MapPost(string path, HttpResponse response);
 
         IRoutingTable MapPost(string path, Func<HttpRequest, HttpResponse> responseFunction);
 
-        IRoutingTable MapPost<TController>(string path, Func<TController, HttpResponse> controllerFunction)
-            where TController : Controller;
+    
 
 
 
