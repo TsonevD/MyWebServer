@@ -20,8 +20,9 @@ namespace MyWebServer
                 .MapGet<AnimalsController>("/Cats", c => c.Cats())
                 .MapGet<AnimalsController>("/Dogs", c => c.Dogs())
                 .MapGet<AnimalsController>("/Turtles", c => c.Turtles())
-
-                .MapGet<HomeController>("/softuni" , c=>c.toSoftUni()));
+                .MapGet<HomeController>("/softuni" , c=>c.toSoftUni())
+                .MapGet<CatsController>("/Cats/Create" , c=>c.Create())
+                .MapPost<CatsController>("/Cats/Save" , c=>c.Save()));
 
             await server.Start();
         }

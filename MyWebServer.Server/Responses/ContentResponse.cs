@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using MyWebServer.Server.Common;
 using MyWebServer.Server.Http;
 
@@ -10,18 +6,13 @@ namespace MyWebServer.Server.Responses
 {
     public class ContentResponse : HttpResponse
     {
-        public ContentResponse(string text, string contentType)
+        public ContentResponse(string content, string contentType)
             : base(HttpStatusCode.OK)
         {
-            Guard.AgainstNull(text);
-            ;
+            Guard.AgainstNull(content , nameof(content));
+            Guard.AgainstNull(contentType , nameof(content));
 
-            var contentLength = Encoding.UTF8.GetBytes(text).Length;
-
-            this.Headers.Add("Content-Type", contentType);
-            this.Headers.Add("Content-Length", contentLength.ToString());
-
-            this.Content = text;
+            this.PrepareContent(content, contentType);
         }
     }
 }

@@ -15,9 +15,10 @@ namespace MyWebServer.Server.Http
 
         public string Path { get; private set; }
 
-        public Dictionary<string , string > Query { get; private set; }
+        public IReadOnlyDictionary<string , string > Query { get; private set; }
+        public IReadOnlyDictionary<string, string> Form { get; private set; }
 
-        public HttpHeaderCollection Headers { get; private set; }
+        public IReadOnlyDictionary<string, HttpHeader> Headers { get; private set; }
 
         public string Body  { get;private set; }
 
@@ -25,10 +26,10 @@ namespace MyWebServer.Server.Http
         {
             var lines = request.Split(NewLine);
 
+
             var startLine = lines.First().Split(" ");
 
             var method = ParseHttpMethod(startLine[0]);
-
             var url = startLine[1];
 
             var (path, query) = ParseUrl(url);
@@ -39,6 +40,8 @@ namespace MyWebServer.Server.Http
             var bodyLines = lines.Skip(headerCollection.Count + 2).ToArray();
             var body = string.Join(NewLine,bodyLines);
 
+            var form = ParseForm(headerCollection, body);
+
             return new HttpRequest()
             {
                 Method = method,
@@ -46,14 +49,16 @@ namespace MyWebServer.Server.Http
                 Query = query,
                 Headers = headerCollection,
                 Body = body,
+                Form = form,
             };
         }
 
-   
+    
 
-        private static HttpHeaderCollection parseHttpHeaderCollection(IEnumerable<string> headerLines)
+
+        private static Dictionary<string, HttpHeader> parseHttpHeaderCollection(IEnumerable<string> headerLines)
         {
-            var headerCollection = new HttpHeaderCollection();
+            var headerCollection = new Dictionary<string , HttpHeader>();
 
             foreach (var headerLine in headerLines)
             {
@@ -75,7 +80,7 @@ namespace MyWebServer.Server.Http
 
                 var header = new HttpHeader(headerName, headerValue);
             
-                headerCollection.Add(headerName, headerValue);
+                headerCollection.Add(headerName, header);
             }
 
             return headerCollection;
@@ -110,6 +115,18 @@ namespace MyWebServer.Server.Http
                     .Select(part => part.Split('='))
                     .Where(part=>part.Length==2)
                     .ToDictionary(part => part[0] , part => part[1]);
+        }
+        private static Dictionary<string, string> ParseForm(Dictionary<string, HttpHeader> headers, string body)
+        {
+            var result = new Dictionary<string, string>();
+
+            if (headers.ContainsKey(HttpHeader.ContentType)
+                && headers[HttpHeader.ContentType].Value == HttpContentType.FormUrlEncoded)
+            {
+                result = ParseQuery(body);
+            }
+
+            return result;
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using Microsoft.VisualBasic;
 using MyWebServer.Server.Http;
 using MyWebServer.Server.Responses;
 
@@ -28,5 +30,14 @@ namespace MyWebServer.Server.Controllers
         {
             return new RedirectResponse(location);
         }
+
+        protected HttpResponse View([CallerMemberName] string viewName ="")
+        {
+            return new ViewResponse(viewName, this.GetControllerName());
+        }
+
+        private string GetControllerName() => this.GetType().Name.Replace(nameof(Controller), string.Empty);
+
+
     }
 }
