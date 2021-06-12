@@ -22,9 +22,8 @@ namespace MyWebServer.Controllers
 
             return Html(result);
         }
-        public HttpResponse Dogs()
-        {
-            return Html("<h1>Marcho Rullzzz!!!</h1>");
-        }
+        public HttpResponse Dogs() => View();
+
+        public HttpResponse Turtles() => View("Animals/Wild/Turtles");
     }
 }
