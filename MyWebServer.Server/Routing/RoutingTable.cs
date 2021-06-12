@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using MyWebServer.Server.Common;
 using MyWebServer.Server.Http;
-using MyWebServer.Server.Responses;
+using MyWebServer.Server.Results;
 
 namespace MyWebServer.Server.Routing
 {
@@ -73,7 +67,7 @@ namespace MyWebServer.Server.Routing
 
             if (!this.routes.ContainsKey(requestMethod) || !this.routes[requestMethod].ContainsKey(requestUrl))
             {
-                return new NotFoundResponse();
+                return new HttpResponse(HttpStatusCode.NotFound);
             }
 
             var responseFunction = this.routes[requestMethod][requestUrl];

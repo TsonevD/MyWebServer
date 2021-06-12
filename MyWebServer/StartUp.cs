@@ -1,11 +1,7 @@
-﻿using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using MyWebServer.Controllers;
 using MyWebServer.Server;
-using MyWebServer.Server.Responses;
+using MyWebServer.Server.Results;
 using MyWebServer.Server.Controllers;
 
 namespace MyWebServer
@@ -21,10 +17,12 @@ namespace MyWebServer
                 .MapGet<AnimalsController>("/Dogs", c => c.Dogs())
                 .MapGet<AnimalsController>("/Turtles", c => c.Turtles())
                 .MapGet<HomeController>("/softuni" , c=>c.toSoftUni())
+                .MapGet<AccountController>("/Cookies", c => c.ActionWithCookies())
+
                 .MapGet<CatsController>("/Cats/Create" , c=>c.Create())
                 .MapPost<CatsController>("/Cats/Save" , c=>c.Save()));
 
-            await server.Start();
+                await server.Start();
         }
     }
 }
