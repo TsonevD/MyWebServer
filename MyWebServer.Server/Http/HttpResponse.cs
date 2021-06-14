@@ -40,6 +40,11 @@ namespace MyWebServer.Server.Http
 
         public string Content { get; protected set; }
 
+        public static HttpResponse ForError(string message) => new(HttpStatusCode.InternalServerError)
+        {
+            Content = message
+        };
+
         public override string ToString()
         {
             var result = new StringBuilder();

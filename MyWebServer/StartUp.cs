@@ -13,11 +13,15 @@ namespace MyWebServer
             var server = new HttpServer(routingTable => routingTable
                 .MapGet<HomeController>("/", c => c.Index())
                 .MapGet<HomeController>("/ToDogs", c => c.LocalRedirect())
+                .MapGet<HomeController>("/softuni", c => c.toSoftUni())
+                .MapGet<HomeController>("/Error", c => c.Error())
+
                 .MapGet<AnimalsController>("/Cats", c => c.Cats())
                 .MapGet<AnimalsController>("/Dogs", c => c.Dogs())
                 .MapGet<AnimalsController>("/Turtles", c => c.Turtles())
-                .MapGet<HomeController>("/softuni" , c=>c.toSoftUni())
                 .MapGet<AccountController>("/Cookies", c => c.ActionWithCookies())
+                .MapGet<AccountController>("/Session", c => c.ActionWithSession())
+
 
                 .MapGet<CatsController>("/Cats/Create" , c=>c.Create())
                 .MapPost<CatsController>("/Cats/Save" , c=>c.Save()));

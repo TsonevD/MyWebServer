@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MyWebServer.Server.Http;
 using MyWebServer.Server.Routing;
+using HttpStatusCode = MyWebServer.Server.Http.HttpStatusCode;
 
 namespace MyWebServer.Server
 {
@@ -20,9 +21,8 @@ namespace MyWebServer.Server
 
         private readonly RoutingTable routingTable;
 
-        public HttpServer(string ipAddress, int port , Action<IRoutingTable> routingTableConfiguration)
+        public HttpServer(string ipAddress, int port, Action<IRoutingTable> routingTableConfiguration)
         {
-            //localhost:9090
             this.ipAddress = IPAddress.Parse(ipAddress);
             this.port = port;
 
@@ -33,14 +33,13 @@ namespace MyWebServer.Server
         }
 
         public HttpServer(int port, Action<IRoutingTable> routingTable)
-        :this("127.0.0.1" , port , routingTable)
+        : this("127.0.0.1", port, routingTable)
         {
         }
 
         public HttpServer(Action<IRoutingTable> routingTable)
-         :this(5000 , routingTable)
+         : this(5000, routingTable)
         {
-            
         }
 
 
@@ -58,25 +57,63 @@ namespace MyWebServer.Server
 
                 var networkStream = connection.GetStream();
 
-               var requestText = await this.ReadRequest(networkStream);
+                var requestText = await this.ReadRequest(networkStream);
 
-               
-               Console.WriteLine(requestText);
-               var request = HttpRequest.Parse(requestText);
+                try
+                {
+                    var request = HttpRequest.Parse(requestText);
 
+                    var response = this.routingTable.MatchRequest(request);
 
-               var response = this.routingTable.MatchRequest(request);
-               
+                    this.PrepareSession(request, response);
 
-               await this.WriteResponse(networkStream , response);
+                    this.LogPipeline(request, response);
 
+                    await this.WriteResponse(networkStream, response);
+                }
+                catch (Exception exception)
+                {
+                    await HandleError(networkStream, exception);
+                }
 
                 connection.Close();
             }
 
         }
 
-        private async Task WriteResponse(NetworkStream networkStream , HttpResponse response)
+        private void LogPipeline(HttpRequest request, HttpResponse response)
+        {
+            var separator = new string('-', 50);
+
+            var log = new StringBuilder();
+
+            log.AppendLine();
+            log.AppendLine(separator);
+
+            log.AppendLine("Request");
+            log.AppendLine(request.ToString());
+            log.AppendLine();
+
+            log.AppendLine("Response:");
+            log.AppendLine(response.ToString());
+
+            Console.WriteLine(log);
+
+        }
+
+        private async Task HandleError(NetworkStream networkStream,Exception exception)
+        {
+            var errorMessage = $"{exception.Message} {Environment.NewLine} {exception.StackTrace}";
+
+            var errorResponse = HttpResponse.ForError(errorMessage);
+
+            await WriteResponse(networkStream, errorResponse);
+        }
+        private void PrepareSession(HttpRequest request, HttpResponse response)
+            => response.AddCookie(HttpSession.SessionCookieName, request.Session.Id);
+
+
+        private async Task WriteResponse(NetworkStream networkStream, HttpResponse response)
         {
             var responseBytes = Encoding.UTF8.GetBytes(response.ToString());
 

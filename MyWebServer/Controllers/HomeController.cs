@@ -1,4 +1,5 @@
-﻿using MyWebServer.Server.Controllers;
+﻿using System;
+using MyWebServer.Server.Controllers;
 using MyWebServer.Server.Http;
 using MyWebServer.Server.Results;
 
@@ -11,19 +12,15 @@ namespace MyWebServer.Controllers
         {
         }
         public HttpResponse Index()
-        {
-            return Text("Hello from Dimitar!");
-        }
+            => Text("Hello from Dimitar!");
 
-        public HttpResponse toSoftUni()
-        {
-            return Redirect("https://softuni.bg");
-        }
+        public HttpResponse toSoftUni() 
+            => Redirect("https://softuni.bg");
 
         public HttpResponse LocalRedirect()
-        {
-            return Redirect("/Dogs");
-        }
+            => Redirect("/Dogs");
 
+        public HttpResponse Error()
+            => throw new InvalidOperationException("Invalid Action");
     }
 }
